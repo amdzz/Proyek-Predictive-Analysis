@@ -99,7 +99,25 @@ Selain itu, untuk mengatasi ketidakseimbangan data pada label target, teknik res
 ## Modeling
 Tahapan modeling merupakan inti dari proyek klasifikasi kualitas udara ini. Dalam proyek ini, digunakan dua algoritma machine learning yaitu Random Forest dan XGBoost. Keduanya dipilih karena dikenal memiliki performa tinggi dalam tugas klasifikasi, serta mampu menangani data dengan fitur numerik secara efisien. Random Forest merupakan algoritma ensemble yang membentuk beberapa pohon keputusan dan menggabungkan hasilnya untuk meningkatkan akurasi prediksi. Salah satu kelebihan utama Random Forest adalah kemampuannya dalam mengurangi overfitting yang sering terjadi pada pohon keputusan tunggal. Selain itu, Random Forest juga mampu menangani data dengan fitur yang saling berkorelasi. Namun, kekurangannya adalah waktu komputasi yang relatif lebih lama dibandingkan model sederhana serta kurang transparan dalam interpretasi hasil. Sementara itu, XGBoost (Extreme Gradient Boosting) adalah algoritma boosting yang menggabungkan pohon-pohon keputusan secara bertahap dengan menekankan pada kesalahan prediksi dari model sebelumnya. XGBoost dikenal sangat kuat dalam berbagai kompetisi data science karena kemampuannya menangani outlier, overfitting, serta efisiensi komputasi yang tinggi. Namun, model ini memerlukan proses tuning parameter yang lebih kompleks agar performanya optimal.
 
-Model RF dikonfigurasi dengan parameter n_estimators=600 (jumlah pohon untuk meningkatkan akurasi dan stabilitas), max_depth=15 (membatasi kedalaman pohon untuk mencegah overfitting), criterion='gini' (menggunakan indeks Gini untuk pemisahan), max_features='sqrt' (memilih akar kuadrat dari jumlah fitur untuk efisiensi), random_state=42 (menjaga reproduksibilitas), dan n_jobs=-1 (menggunakan semua core CPU untuk mempercepat pelatihan). Sementara itu, model XGBoost dikonfigurasi dengan n_estimators=600 (jumlah iterasi boosting), max_depth=15 (kedalaman pohon maksimum), learning_rate=0.1 (mengontrol kontribusi setiap pohon untuk mencegah overfitting), subsample=0.8 (menggunakan 80% data per iterasi untuk efisiensi), colsample_bytree=0.8 (menggunakan 80% fitur per pohon untuk diversifikasi), use_label_encoder=False (mencegah encoding otomatis label), eval_metric='mlogloss' (metrik evaluasi untuk klasifikasi multikelas), dan random_state=42 (reproduksibilitas). Kedua model dilatih menggunakan X_train_resampled dan y_train_resampled yang telah diseimbangkan dengan SMOTE.
+Model RF dikonfigurasi dengan parameter:
+- n_estimators=600 (jumlah pohon untuk meningkatkan akurasi dan stabilitas)
+- max_depth=15 (membatasi kedalaman pohon untuk mencegah overfitting)
+- criterion='gini' (menggunakan indeks Gini untuk pemisahan)
+- max_features='sqrt' (memilih akar kuadrat dari jumlah fitur untuk efisiensi)
+- random_state=42 (menjaga reproduksibilitas)
+- n_jobs=-1 (menggunakan semua core CPU untuk mempercepat pelatihan)
+
+Sementara itu, model XGBoost dikonfigurasi dengan parameter: 
+- n_estimators=600 (jumlah iterasi boosting)
+- max_depth=15 (kedalaman pohon maksimum)
+- learning_rate=0.1 (mengontrol kontribusi setiap pohon untuk mencegah overfitting)
+- subsample=0.8 (menggunakan 80% data per iterasi untuk efisiensi)
+- colsample_bytree=0.8 (menggunakan 80% fitur per pohon untuk diversifikasi)
+- use_label_encoder=False (mencegah encoding otomatis label)
+- eval_metric='mlogloss' (metrik evaluasi untuk klasifikasi multikelas)
+- random_state=42 (reproduksibilitas)
+
+Kedua model dilatih menggunakan X_train_resampled dan y_train_resampled yang telah diseimbangkan dengan SMOTE.
 
 Hasil evaluasi kedua model disajikan dalam tabel berikut:
 
