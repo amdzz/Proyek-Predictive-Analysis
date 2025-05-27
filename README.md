@@ -95,6 +95,7 @@ Dilakukan pengecekan terhadap missing values menggunakan fungsi isnull().sum() u
 - o3: 100
 - no2: 102
 - categori: 0
+
 Untuk menangani missing values tersebut, dilakukan proses imputasi menggunakan nilai mean dari masing-masing kolom. Keberadaan label yang sangat jarang justru bisa menyebabkan error atau bias pada model. Dikarenakan missing values yang ditemukan pada kolom pm25 mencapai 80% dari jumlah total data, maka diputuskan untuk menghapus kolom pm25 ini.
 
 ### 2. Encoding
