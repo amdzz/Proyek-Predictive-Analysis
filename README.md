@@ -156,6 +156,7 @@ Hasil dari evaluasi kedua model adalah sebagai berikut:
 - Macro Avg F1-score: 0.94
 - Recall: 0.94
 - Weighted Avg Precision: 0.94
+
 Model Random Forest paling baik mengklasifikasikan kelas “SEDANG” dan “TIDAK SEHAT”, namun masih terdapat beberapa kesalahan klasifikasi pada kelas “BAIK” dan “SEDANG”.
 
 ### 2. Evaluasi Model XGBoost
@@ -163,6 +164,7 @@ Model Random Forest paling baik mengklasifikasikan kelas “SEDANG” dan “TID
 - Macro Avg F1-score: 0.92
 - Recall: 0.93
 - Weighted Avg Precision: 0.93
+
 Meskipun XGBoost memiliki performa yang baik, terlihat bahwa nilai akurasi dan macro average F1-score sedikit lebih rendah dibanding Random Forest.
 
 ### 3. Komparasi
