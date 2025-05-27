@@ -55,11 +55,11 @@ bersumber dari [Kaggle](https://www.kaggle.com/datasets/senadu34/air-quality-ind
 
 ![image](https://github.com/user-attachments/assets/780ef9c5-5c94-45b5-ac6c-508e166ea523)
 
-Pada tahapan ini, dataset yang digunakan terdiri dari 5538 baris dan 11 kolom, memberikan gambaran awal mengenai skala data yang dianalisis. Jumlah missing values yang teridentifikasi meliputi pm10 (311), pm25 (4018), so2 (126), co (84), o3 (100), no2 (102), dan kategor1 (0), yang menunjukkan tingkat ketidaklengkapan data pada beberapa variabel, terutama pm25, yang dapat memengaruhi analisis lebih lanjut. Data menunjukkan dua duplikasi ditemukan sehingga ditindak dengan cara dihapus. 
+Pada tahapan ini, dataset yang digunakan terdiri dari 5538 baris dan 11 kolom, memberikan gambaran awal mengenai skala data yang dianalisis. Jumlah missing values yang teridentifikasi meliputi pm10 (311), pm25 (4018), so2 (126), co (84), o3 (100), no2 (102), dan categori (0), yang menunjukkan tingkat ketidaklengkapan data pada beberapa variabel, terutama pm25, yang dapat memengaruhi analisis lebih lanjut. Data menunjukkan dua duplikasi ditemukan sehingga ditindak dengan cara dihapus. 
 
 ![image](https://github.com/user-attachments/assets/7f0d66eb-efea-4de9-a64d-c53afe498616)
 
-Visualisasi boxplot menunjukkan adanya outlier pada variabel pm10 (242), so2 (46), co (248), o3 (188), dan no2 (198), namun outlier ini masih berada dalam rentang normal berdasarkan distribusi data, sehingga tidak perlu dihapus. Untuk analisis selanjutnya, akan digunakan model Random Forest (RF) dan XGBoost, yang dikenal robust terhadap outlier, sehingga potensi dampak dari nilai ekstrem dalam dataset dapat diminimalkan secara alami oleh model.
+Visualisasi boxplot menunjukkan adanya outlier pada variabel pm10 (242), so2 (46), co (240), o3 (188), dan no2 (198), namun outlier ini masih berada dalam rentang normal berdasarkan distribusi data, sehingga tidak perlu dihapus. Untuk analisis selanjutnya, akan digunakan model Random Forest (RF) dan XGBoost, yang dikenal robust terhadap outlier, sehingga potensi dampak dari nilai ekstrem dalam dataset dapat diminimalkan secara alami oleh model.
 
 ![dist](https://github.com/user-attachments/assets/5430adf7-7d1e-44b0-97b1-5a99528fce5b)
 
@@ -84,13 +84,28 @@ Gambar yang ditampilkan di atas adalah heatmap korelasi antar polutan udara, yan
 
 
 ## Data Preparation
-Tahap data preparation dilakukan untuk memastikan bahwa data yang digunakan dalam pelatihan model sudah bersih, valid, dan relevan. Proses ini dimulai dengan pemilihan fitur-fitur yang dianggap paling berpengaruh terhadap kualitas udara, yaitu pm10, pm25, so2, co, o3, no2, serta kolom categori sebagai label klasifikasi. Pemilihan ini bertujuan untuk menyederhanakan data dan hanya mempertahankan informasi yang diperlukan dalam proses pemodelan. Selanjutnya, dilakukan pembersihan data dengan menghapus baris-baris yang memiliki kategori TIDAK ADA DATA. Hal ini penting karena nilai tersebut tidak merepresentasikan kualitas udara yang sebenarnya, sehingga dapat mengganggu proses pelatihan model dan menghasilkan prediksi yang tidak akurat. Setelah itu, dilakukan pengecekan terhadap nilai-nilai kosong (missing values) pada setiap kolom menggunakan fungsi isnull().sum(). Tujuannya adalah untuk memastikan bahwa tidak ada fitur yang memiliki nilai kosong yang dapat mempengaruhi proses pelatihan model. 
+Tahap data preparation dilakukan untuk memastikan bahwa data yang digunakan dalam pelatihan model sudah bersih, valid, dan relevan. Proses ini dimulai dengan pemilihan fitur-fitur yang dianggap paling berpengaruh terhadap kualitas udara, yaitu pm10, pm25, so2, co, o3, no2, serta kolom categori sebagai label klasifikasi. Pemilihan ini bertujuan untuk menyederhanakan data dan hanya mempertahankan informasi yang diperlukan dalam proses pemodelan. Selanjutnya, dilakukan pembersihan data dengan menghapus baris-baris yang memiliki kategori TIDAK ADA DATA. Hal ini penting karena nilai tersebut tidak merepresentasikan kualitas udara yang sebenarnya, sehingga dapat mengganggu proses pelatihan model dan menghasilkan prediksi yang tidak akurat. Setelah itu, dilakukan pengecekan terhadap nilai-nilai kosong (missing values) pada setiap kolom menggunakan fungsi isnull().sum(). Tujuannya adalah untuk memastikan bahwa tidak ada fitur yang memiliki nilai kosong yang dapat mempengaruhi proses pelatihan model. Kemudian data dengan label kategori BERBAHAYA juga dihapus karena jumlah datanya sangat sedikit (hanya satu baris), sehingga tidak cukup untuk dilakukan proses resampling seperti SMOTE.
 
-Kemudian, kolom pm25 dihapus dari dataset. Keputusan ini dapat diambil karena adanya pertimbangan korelasi tinggi dengan pm10, atau karena model awal menunjukkan performa yang baik meskipun tanpa fitur tersebut. Untuk menyederhanakan model dan menghindari redundansi, penghapusan ini dianggap wajar. Jumlah missing values yang teridentifikasi meliputi pm10 (311), so2 (126), co (84), o3 (100), no2 (102), dan kategor1 (0), sehingga missing values tersebut akan dihapus. Data dengan label kategori BERBAHAYA juga dihapus karena jumlah datanya sangat sedikit (hanya satu baris), sehingga tidak cukup untuk dilakukan proses resampling seperti SMOTE. Keberadaan label yang sangat jarang justru bisa menyebabkan error atau bias pada model. Setelah penghapusan tersebut, indeks data diatur ulang agar tetap rapi dan berurutan. Seluruh proses ini dilakukan secara berurutan untuk memastikan bahwa data yang masuk ke model sudah dalam kondisi optimal untuk pelatihan dan evaluasi.
+### 1. Penanganan Missing Values
+Dilakukan pengecekan terhadap missing values menggunakan fungsi isnull().sum() untuk mengetahui jumlah nilai kosong pada setiap kolom. Jumlah missing values yang teridentifikasi adalah sebagai berikut:
+- pm10: 311
+- pm25: 4018
+- so2: 126
+- co: 84
+- o3: 100
+- no2: 102
+- categori: 0
+Untuk menangani missing values tersebut, dilakukan proses imputasi menggunakan nilai mean dari masing-masing kolom. Keberadaan label yang sangat jarang justru bisa menyebabkan error atau bias pada model. Dikarenakan missing values yang ditemukan pada kolom pm25 mencapai 80% dari jumlah total data, maka diputuskan untuk menghapus kolom pm25 ini.
 
-Kolom 'kategori' yang awalnya bertipe object dikonversi menjadi nilai numerik menggunakan LabelEncoder untuk kebutuhan pemodelan, menghasilkan y_encoded sebagai target. Selanjutnya, dataset dibersihkan dengan menghapus kolomg 'Categori' dari fitur X karena sudah diencode, sehingga X hanya berisi kolom pm10, so2, co, o3, dan no2. Proses ini memastikan bahwa data yang digunakan dalam pemodelan hanya terdiri dari fitur numerik yang relevan. Setelah itu, dataset dibagi menjadi data latih (training) dan data uji (testing) dengan rasio 80:20 menggunakan fungsi train_test_split dengan test_size=0.2 dan random_state=42 untuk menjaga reproduksibilitas. Pembagian ini menghasilkan X_train, X_test, y_train, dan y_test, yang akan digunakan untuk melatih dan menguji model. 
+### 2. Encoding
+Kolom kategori yang semula bertipe object dikonversi menjadi nilai numerik menggunakan LabelEncoder, menghasilkan variabel y_encoded sebagai target. Proses ini penting untuk memungkinkan algoritma machine learning memproses label secara numerik. Setelah encoding, kolom kategori dihapus dari fitur X sehingga X hanya terdiri dari kolom numerik pm10, so2, co, o3, dan no2.
+
+### 3. Split Data
+Dataset kemudian dibagi menjadi data latih (training) dan data uji (testing) menggunakan fungsi train_test_split dengan rasio 80:20 (test_size=0.2) dan random_state=42 untuk menjaga konsistensi hasil. Hasil dari proses ini adalah X_train, X_test, y_train, dan y_test, yang kemudian digunakan dalam tahap pelatihan dan evaluasi model.
 
 ![image](https://github.com/user-attachments/assets/2947e234-3316-412d-811f-cb536fdee01d)
+
+### 4. Resampling Data
 
 Selain itu, untuk mengatasi ketidakseimbangan data pada label target, teknik resampling dilakukan menggunakan SMOTE dengan random_state=42, yang menghasilkan X_train_resampled dan y_train_resampled. Proses ini meningkatkan jumlah sampel dari kelas minoritas, dengan distribusi label y_train_resampled menunjukkan diratakan menjadi 2526, sehingga memastikan model dapat belajar dengan lebih baik dari data yang lebih seimbang, sambil tetap mempertahankan transparansi dan reproduksibilitas proses.
 
@@ -119,11 +134,9 @@ Sementara itu, model XGBoost dikonfigurasi dengan parameter:
 
 Kedua model dilatih menggunakan X_train_resampled dan y_train_resampled yang telah diseimbangkan dengan SMOTE.
 
-Hasil evaluasi kedua model disajikan dalam tabel berikut:
+Hasil kedua model disajikan dalam tabel berikut:
 
 ![image](https://github.com/user-attachments/assets/97349cd7-9755-499a-b92d-541ca7a1238e)
-
-Berdasarkan hasil evaluasi, Random Forest dipilih sebagai model terbaik karena memiliki nilai precision, recall, dan F1-score (weighted average) sebesar 0.94, sedikit lebih tinggi dibandingkan XGBoost yang mencapai 0.93 pada semua metrik. Selain itu, confusion matrix menunjukkan bahwa Random Forest memiliki performa yang lebih baik dalam memprediksi kelas mayoritas dan lebih sedikit kesalahan prediksi pada kelas minoritas. Pilihan ini sejalan dengan kebutuhan untuk memaksimalkan akurasi klasifikasi pada dataset yang telah diseimbangkan.
 
 ## Evaluation
 Dalam proyek ini, digunakan empat metrik evaluasi utama untuk menilai performa model klasifikasi kualitas udara, yaitu akurasi, precision, recall, dan F1-score. 
@@ -135,10 +148,55 @@ Dalam proyek ini, digunakan empat metrik evaluasi utama untuk menilai performa m
 
 Metrik-metrik ini dipilih karena sesuai dengan konteks permasalahan klasifikasi multi-kelas. Akurasi digunakan untuk melihat secara umum seberapa banyak prediksi model yang benar dibandingkan dengan jumlah data keseluruhan. Namun, karena dalam data terdapat kemungkinan ketidakseimbangan antar kelas, maka precision dan recall digunakan untuk memberikan penilaian yang lebih rinci per kelas. Precision mengukur seberapa tepat model dalam memberikan label suatu kategori, sementara recall menunjukkan seberapa baik model dalam menangkap semua data yang memang termasuk dalam kategori tersebut. F1-score kemudian digunakan sebagai keseimbangan antara precision dan recall, khususnya berguna saat kita ingin menghindari ketimpangan antara keduanya.
 
-Hasil dari evaluasi model Random Forest adalah sebagai berikut:
+Hasil dari evaluasi kedua model adalah sebagai berikut:
 
-![image](https://github.com/user-attachments/assets/e933eecf-b2ee-4170-b532-bcc9291290a3)
+### 1. Evaluasi Model Random Forest
+- Akurasi: 94.04%
+- Macro Avg F1-score: 0.94
+- Recall: 0.94
+- Weighted Avg Precision: 0.94
+Model Random Forest paling baik mengklasifikasikan kelas “SEDANG” dan “TIDAK SEHAT”, namun masih terdapat beberapa kesalahan klasifikasi pada kelas “BAIK” dan “SEDANG”.
 
-Pada tahapan evaluasi, model Random Forest yang dipilih sebagai model terbaik berhasil mencapai tujuan yang telah ditetapkan dalam Business Understanding. Model ini mampu mengklasifikasikan kualitas udara dengan akurasi 0.94, serta F1-score dan recall (weighted average) sebesar 0.94, menunjukkan performa yang baik di semua kelas, termasuk kelas minoritas seperti "Sangat Tidak Sehat" (F1-score 0.91) setelah penerapan SMOTE untuk mengatasi ketidakseimbangan data (Problem Statement 4, Goal 4, Solution Statement 3). Dengan demikian, model ini menjawab kebutuhan lembaga pemerintahan atau lingkungan akan sistem otomatis yang dapat memprediksi kualitas udara secara akurat (Problem Statement 1, Goal 1, Solution Statement 1). Selain itu, model mengubah data numerik konsentrasi polutan menjadi kategori kualitas udara yang mudah dipahami (Baik, Sedang, Tidak Sehat, dll.), sehingga mendukung masyarakat umum dan pengambil kebijakan dalam memahami informasi kualitas udara dengan lebih baik (Problem Statement 2, Goal 2).
+### 2. Evaluasi Model XGBoost
+- Akurasi: 92.77%
+- Macro Avg F1-score: 0.92
+- Recall: 0.93
+- Weighted Avg Precision: 0.93
+Meskipun XGBoost memiliki performa yang baik, terlihat bahwa nilai akurasi dan macro average F1-score sedikit lebih rendah dibanding Random Forest.
 
-Analisis feature importance dari Random Forest dan XGBoost menunjukkan bahwa polutan O3 dan PM10 memiliki pengaruh terbesar terhadap klasifikasi kualitas udara, dengan skor masing-masing sekitar 0.55 dan 0.25 pada Random Forest, diikuti oleh SO2, CO, dan NO2 (Problem Statement 3, Goal 3, Solution Statement 2). Hasil ini memberikan wawasan bagi pengambil kebijakan untuk memprioritaskan pengendalian polutan seperti O3 dan PM10, yang sering kali berasal dari emisi kendaraan dan aktivitas industri, sehingga analisis manual yang kurang efisien dapat digantikan dengan pendekatan berbasis model. Setiap solusi yang dirancang, termasuk pemilihan model, penggunaan SMOTE, dan analisis feature importance, telah berdampak positif dengan meningkatkan akurasi prediksi, memperbaiki generalisasi pada kelas minoritas, dan memberikan informasi yang actionable untuk pengambilan keputusan, sejalan dengan tujuan awal proyek.
+### 3. Komparasi
+
+![image](https://github.com/user-attachments/assets/cfce92d4-0b1a-4e0d-86cf-33b53b95dc6f)
+
+Berdasarkan hasil evaluasi, Random Forest dipilih sebagai model terbaik karena memiliki nilai precision, recall, dan F1-score (weighted average) sebesar 0.94, sedikit lebih tinggi dibandingkan XGBoost yang mencapai 0.93 pada semua metrik. Pilihan ini sejalan dengan kebutuhan untuk memaksimalkan akurasi klasifikasi pada dataset yang telah diseimbangkan.
+
+### 4. Analisis Feature Importance
+
+![image](https://github.com/user-attachments/assets/b0613af6-d770-4f96-9b61-3e18e2b924e0)
+
+Berdasarkan grafik perbandingan feature importance antara model Random Forest dan XGBoost, dapat disimpulkan bahwa O3 (ozon) merupakan fitur yang paling berpengaruh terhadap klasifikasi kualitas udara, dengan skor importance tertinggi di kedua model. Disusul oleh PM10 yang juga menunjukkan kontribusi signifikan meskipun lebih rendah dibanding O3. Polutan lainnya seperti SO2, CO, dan NO2 memiliki pengaruh yang jauh lebih kecil, yang terlihat dari skor importance yang rendah di kedua model. Konsistensi hasil antara Random Forest dan XGBoost menunjukkan bahwa model memiliki persepsi yang serupa terhadap variabel-variabel penting dalam menentukan kategori kualitas udara.
+
+### Keterkaitan Evaluasi Model dengan Business Understanding
+
+#### Problem Statement
+Model Random Forest yang telah dievaluasi terbukti berhasil mengatasi seluruh pernyataan masalah yang telah dirumuskan:
+- Model memberikan prediksi kualitas udara secara cepat dan akurat berdasarkan data polutan sensor. Evaluasi menunjukkan akurasi sebesar 94.04%, sehingga kebutuhan lembaga pemerintahan/lingkungan akan sistem otomatis telah terpenuhi.
+- Model mengubah nilai numerik polutan menjadi label kualitas udara (Baik, Sedang, Tidak Sehat, dll.) yang mudah dipahami oleh masyarakat umum maupun pengambil kebijakan.
+- Melalui analisis feature importance dari Random Forest dan XGBoost, model dapat mengungkapkan faktor polutan utama seperti O3 dan PM10, menggantikan analisis manual yang kompleks dan rawan kesalahan.
+- Penerapan SMOTE berhasil memperbaiki ketidakseimbangan data. Model mampu memprediksi kategori minoritas seperti "Sangat Tidak Sehat" dengan F1-score tinggi (0.91), mengatasi bias yang umum pada model yang dilatih dengan data tidak seimbang.
+
+#### Goals
+Semua tujuan yang ditetapkan pada tahap *Business Understanding* telah tercapai melalui proses modeling dan evaluasi:
+- Model machine learning (Random Forest) telah dikembangkan dan mampu mengklasifikasikan kualitas udara dengan akurasi tinggi.
+- Data numerik berhasil dikonversi menjadi label kategori kualitas udara yang lebih komunikatif dan informatif.
+- Feature importance berhasil dianalisis, memberikan informasi polutan dominan terhadap penurunan kualitas udara.
+- Ketidakseimbangan kelas berhasil diatasi menggunakan teknik SMOTE, yang meningkatkan performa model di kelas minoritas.
+
+
+#### Solution Statement
+Setiap solusi yang direncanakan pada awal proyek terbukti efektif dan berdampak langsung terhadap kualitas model:
+- Model Random Forest dan XGBoost telah diterapkan. Random Forest dipilih sebagai model terbaik berdasarkan evaluasi akurasi, F1-score, dan recall, yang menunjukkan hasil yang sangat memuaskan di seluruh kelas.
+- Analisis feature importance dari kedua model telah dilakukan. Hasilnya menunjukkan bahwa O₃ dan PM10 adalah fitur dengan pengaruh terbesar, memberikan insight bagi pengendalian polusi.
+- Penerapan teknik SMOTE berhasil memperbaiki distribusi kelas dan meningkatkan kemampuan model dalam mengklasifikasikan kategori yang jarang muncul.
+- Evaluasi yang menyeluruh dilakukan menggunakan metrik yang sesuai (accuracy, F1-score, recall, confusion matrix), memastikan kinerja model tidak bias dan dapat diandalkan.
+
