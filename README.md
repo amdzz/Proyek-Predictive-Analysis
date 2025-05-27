@@ -96,7 +96,7 @@ Dilakukan pengecekan terhadap missing values menggunakan fungsi isnull().sum() u
 - no2: 102
 - categori: 0
 
-Untuk menangani missing values tersebut, dilakukan proses imputasi menggunakan nilai mean dari masing-masing kolom. Keberadaan label yang sangat jarang justru bisa menyebabkan error atau bias pada model. Dikarenakan missing values yang ditemukan pada kolom pm25 mencapai 80% dari jumlah total data, maka diputuskan untuk menghapus kolom pm25 ini.
+Untuk menangani missing values tersebut, dilakukan proses imputasi menggunakan nilai mean dari masing-masing kolom. Dikarenakan missing values yang ditemukan pada kolom pm25 mencapai 80% dari jumlah total data, maka diputuskan untuk menghapus kolom pm25 ini.
 
 ### 2. Encoding
 Kolom kategori yang semula bertipe object dikonversi menjadi nilai numerik menggunakan LabelEncoder, menghasilkan variabel y_encoded sebagai target. Proses ini penting untuk memungkinkan algoritma machine learning memproses label secara numerik. Setelah encoding, kolom kategori dihapus dari fitur X sehingga X hanya terdiri dari kolom numerik pm10, so2, co, o3, dan no2.
