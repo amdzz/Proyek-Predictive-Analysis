@@ -55,7 +55,18 @@ bersumber dari [Kaggle](https://www.kaggle.com/datasets/senadu34/air-quality-ind
 
 ![image](https://github.com/user-attachments/assets/780ef9c5-5c94-45b5-ac6c-508e166ea523)
 
-Pada tahapan ini, dataset yang digunakan terdiri dari 5538 baris dan 11 kolom, memberikan gambaran awal mengenai skala data yang dianalisis. Jumlah missing values yang teridentifikasi meliputi pm10 (311), pm25 (4018), so2 (126), co (84), o3 (100), no2 (102), dan categori (0), yang menunjukkan tingkat ketidaklengkapan data pada beberapa variabel, terutama pm25, yang dapat memengaruhi analisis lebih lanjut. Data menunjukkan dua duplikasi ditemukan sehingga ditindak dengan cara dihapus. 
+Pada tahapan ini, dataset yang digunakan terdiri dari 5538 baris dan 11 kolom, memberikan gambaran awal mengenai skala data yang dianalisis. Jumlah missing values yang teridentifikasi meliputi: 
+- tanggal: 0
+- stasiun: 1
+- pm10: 315
+- pm25: 4022
+- so2: 130
+- co: 88
+- o3: 104
+- no2: 106
+- categori: 0
+
+yang menunjukkan tingkat ketidaklengkapan data pada beberapa variabel, terutama pm25, yang dapat memengaruhi analisis lebih lanjut. 
 
 ![image](https://github.com/user-attachments/assets/7f0d66eb-efea-4de9-a64d-c53afe498616)
 
@@ -87,7 +98,7 @@ Gambar yang ditampilkan di atas adalah heatmap korelasi antar polutan udara, yan
 Tahap data preparation dilakukan untuk memastikan bahwa data yang digunakan dalam pelatihan model sudah bersih, valid, dan relevan. Proses ini dimulai dengan pemilihan fitur-fitur yang dianggap paling berpengaruh terhadap kualitas udara, yaitu pm10, pm25, so2, co, o3, no2, serta kolom categori sebagai label klasifikasi. Pemilihan ini bertujuan untuk menyederhanakan data dan hanya mempertahankan informasi yang diperlukan dalam proses pemodelan. Selanjutnya, dilakukan pembersihan data dengan menghapus baris-baris yang memiliki kategori TIDAK ADA DATA. Hal ini penting karena nilai tersebut tidak merepresentasikan kualitas udara yang sebenarnya, sehingga dapat mengganggu proses pelatihan model dan menghasilkan prediksi yang tidak akurat. Setelah itu, dilakukan pengecekan terhadap nilai-nilai kosong (missing values) pada setiap kolom menggunakan fungsi isnull().sum(). Tujuannya adalah untuk memastikan bahwa tidak ada fitur yang memiliki nilai kosong yang dapat mempengaruhi proses pelatihan model. Kemudian data dengan label kategori BERBAHAYA juga dihapus karena jumlah datanya sangat sedikit (hanya satu baris), sehingga tidak cukup untuk dilakukan proses resampling seperti SMOTE.
 
 ### 1. Penanganan Missing Values
-Dilakukan pengecekan terhadap missing values menggunakan fungsi isnull().sum() untuk mengetahui jumlah nilai kosong pada setiap kolom. Jumlah missing values yang teridentifikasi adalah sebagai berikut:
+Dilakukan pengecekan terhadap missing values menggunakan fungsi isnull().sum() untuk mengetahui jumlah nilai kosong pada setiap kolom. Jumlah missing values yang teridentifikasi setelah dilakukan pembersihan data dengan menghapus baris-baris yang memiliki kategori TIDAK ADA DATA adalah sebagai berikut:
 - pm10: 311
 - pm25: 4018
 - so2: 126
@@ -98,15 +109,19 @@ Dilakukan pengecekan terhadap missing values menggunakan fungsi isnull().sum() u
 
 Untuk menangani missing values tersebut, dilakukan proses imputasi menggunakan nilai mean dari masing-masing kolom. Dikarenakan missing values yang ditemukan pada kolom pm25 mencapai 80% dari jumlah total data, maka diputuskan untuk menghapus kolom pm25 ini.
 
-### 2. Encoding
+### 2. Penanganan Duplikasi Data
+
+Setelah melakukan imputasi, dilakukan proses penanganan duplikasi data dengan tiga langkah utama. Pertama, jumlah baris duplikat dihitung menggunakan df.duplicated().sum() dan ditemukan ada 2 baris duplikat dalam DataFrame. Kedua, baris-baris duplikat tersebut dihapus dengan perintah df = df.drop_duplicates(), yang akan menghapus semua baris yang terdeteksi sebagai duplikat. Ketiga, dilakukan pengecekan ulang untuk memastikan bahwa semua duplikat telah dihapus. Hal ini dilakukan dengan cara menghitung kembali jumlah baris duplikat dan hasilnya menunjukkan angka 0, yang berarti tidak ada lagi data duplikat dalam DataFrame.
+
+### 3. Encoding
 Kolom kategori yang semula bertipe object dikonversi menjadi nilai numerik menggunakan LabelEncoder, menghasilkan variabel y_encoded sebagai target. Proses ini penting untuk memungkinkan algoritma machine learning memproses label secara numerik. Setelah encoding, kolom kategori dihapus dari fitur X sehingga X hanya terdiri dari kolom numerik pm10, so2, co, o3, dan no2.
 
-### 3. Split Data
+### 4. Split Data
 Dataset kemudian dibagi menjadi data latih (training) dan data uji (testing) menggunakan fungsi train_test_split dengan rasio 80:20 (test_size=0.2) dan random_state=42 untuk menjaga konsistensi hasil. Hasil dari proses ini adalah X_train, X_test, y_train, dan y_test, yang kemudian digunakan dalam tahap pelatihan dan evaluasi model.
 
 ![image](https://github.com/user-attachments/assets/2947e234-3316-412d-811f-cb536fdee01d)
 
-### 4. Resampling Data
+### 5. Resampling Data
 
 Selain itu, untuk mengatasi ketidakseimbangan data pada label target, teknik resampling dilakukan menggunakan SMOTE dengan random_state=42, yang menghasilkan X_train_resampled dan y_train_resampled. Proses ini meningkatkan jumlah sampel dari kelas minoritas, dengan distribusi label y_train_resampled menunjukkan diratakan menjadi 2526, sehingga memastikan model dapat belajar dengan lebih baik dari data yang lebih seimbang, sambil tetap mempertahankan transparansi dan reproduksibilitas proses.
 
